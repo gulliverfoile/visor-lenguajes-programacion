@@ -1,0 +1,11 @@
+- nombre: "Convertir var a let"
+  busca: "VariableDeclaration[kind='var']"
+  reemplaza: "let"
+
+- nombre: "Comentar console.log"
+  busca: "CallExpression[callee.object.name='console'][callee.property.name='log']"
+  reemplaza: "// $&"
+
+- nombre: "Convertir == a ==="
+  busca: "BinaryExpression[operator='==']"
+  reemplaza: "==="

@@ -1,0 +1,26 @@
+ATAJOS DE TECLADO DEL ANALIZADOR DE CÓDIGO
+===========================================
+
+Atajos predefinidos:
+- Ctrl+Shift+N: Ir al siguiente problema (en orden de líneas).
+- Ctrl+Shift+P: Ir al problema anterior.
+- Ctrl+Shift+F: Aplicar corrección al primer problema de la línea actual (si tiene corrección disponible).
+
+Cómo añadir un nuevo atajo:
+1. Abre el archivo `modules/keyboard-shortcuts.js`.
+2. En el constructor, verás la propiedad `options` con los atajos por defecto.
+3. Puedes pasar nuevos atajos al crear la instancia en `core.js`:
+   const keyboardShortcuts = new KeyboardShortcuts(editor, () => problemasActuales, aplicarCorreccion, {
+       nextProblemKey: 'Ctrl+E',
+       prevProblemKey: 'Ctrl+W',
+       applyFixKey: 'Ctrl+R'
+   });
+4. Si quieres añadir una acción completamente nueva, modifica el método `init` añadiendo una nueva condición y define el método correspondiente en la clase.
+
+Nota: Las combinaciones usan los nombres estándar: Ctrl, Shift, Alt, Meta (Cmd en Mac). Las teclas de función como F1, F2, etc., se representan como 'F1', 'F2', etc. Ejemplos:
+- 'Ctrl+Shift+F'
+- 'Alt+F4'
+- 'Shift+ArrowDown'
+- 'Ctrl+F1'
+
+Para más información, consulta la documentación de CodeMirror y la API de eventos de teclado.

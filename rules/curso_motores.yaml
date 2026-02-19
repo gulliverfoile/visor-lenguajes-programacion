@@ -1,0 +1,123 @@
+modulos:
+  - nombre: "1. Formato TXT"
+    lecciones:
+      - titulo: "Estructura básica de TXT"
+        contenido: |
+          # 📄 Formato TXT (etiquetas)
+
+          El formato TXT es el más sencillo pero requiere cuidado con la sintaxis.
+
+          ## Reglas de oro:
+          - Usa `# MODULO:` y `# LECCION:` para definir la jerarquía.
+          - El contenido puede ser **Markdown** o texto plano.
+          - Las etiquetas `IMAGEN:`, `VIDEO:`, `PLUGIN:` van después del contenido.
+          - Para plugins multilínea, escribe todo debajo de `PLUGIN:` hasta la siguiente etiqueta.
+
+          ## Ejemplo:
+
+          ```
+          # MODULO: Conceptos básicos
+          # LECCION: Mi primera lección
+
+          CONTENIDO: Esto es **Markdown** con una lista:
+          - Elemento 1
+          - Elemento 2
+
+          IMAGEN: https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600
+
+          VIDEO: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
+          PLUGIN:
+          const app = document.getElementById('app');
+          app.innerHTML = '<h3 style="color:lime">Plugin desde TXT</h3>';
+          ```
+
+          > **Nota:** No olvides los dos puntos después de cada etiqueta.
+        plugin: |
+          const app = document.getElementById('app'); app.innerHTML = '<div style="background:#10b981; color:white; padding:20px; text-align:center; border-radius:8px;">✅ Plugin TXT funcionando</div>';
+
+      - titulo: "TXT: Consejos y errores comunes"
+        contenido: |
+          ## ⚠️ Errores frecuentes
+
+          1. **Espacios antes de #**: La línea debe empezar exactamente con `#`, sin espacios.
+          2. **Olvidar los dos puntos**: Cada etiqueta lleva `:` después del nombre.
+          3. **Mezclar contenido con etiquetas**: El texto de `CONTENIDO:` debe ir en una línea aparte.
+          4. **Plugins rotos**: Si tu plugin tiene varias líneas, asegúrate de que no haya etiquetas en medio.
+
+          ## ✅ Buenas prácticas
+
+          - Usa **Markdown** para dar formato al texto (negritas, listas, enlaces).
+          - Las imágenes deben ser enlaces directos (terminar en .jpg, .png, etc.).
+          - Para vídeos de YouTube, usa el enlace normal (el motor lo convertirá automáticamente a embed).
+
+  - nombre: "2. Formato JSON"
+    lecciones:
+      - titulo: "Estructura JSON"
+        contenido: |
+          # 📦 Formato JSON
+
+          El formato JSON es el más **estructurado** y **seguro** para máquinas. Es ideal si generas cursos automáticamente.
+
+          ## Estructura típica:
+
+          ```json
+          {
+            "modulos": [
+              {
+                "nombre": "Fundamentos",
+                "lecciones": [
+                  {
+                    "titulo": "Lección 1",
+                    "contenido": "# Título\n\nContenido en Markdown.",
+                    "imagen": "https://ejemplo.com/foto.jpg",
+                    "video": "https://youtube.com/watch?v=abc123",
+                    "plugin": "document.getElementById('app').innerHTML = '<h1>Hola</h1>';"
+                  }
+                ]
+              }
+            ]
+          }
+          ```
+
+          ## Características:
+          - Las cadenas largas (como el contenido) deben escapar las comillas dobles.
+          - Para saltos de línea usa `\n`.
+          - Es el formato preferido si usas editores de código.
+        plugin: |
+          const app = document.getElementById('app'); app.innerHTML = '<div style="background:#3b82f6; color:white; padding:20px; text-align:center; border-radius:8px;">✅ Plugin JSON funcionando</div>';
+
+  - nombre: "3. Formato YAML"
+    lecciones:
+      - titulo: "Estructura YAML"
+        contenido: |
+          # 📐 Formato YAML
+
+          YAML es el **equilibrio perfecto** entre legibilidad humana y estructura. Muy usado en configuraciones.
+
+          ## Ejemplo:
+
+          ```yaml
+          modulos:
+            - nombre: "Introducción"
+              lecciones:
+                - titulo: "Primera clase"
+                  contenido: |
+                    # Título
+                    Esto es un contenido con **negritas**.
+                    Lista:
+                    - Uno
+                    - Dos
+                  imagen: "https://ejemplo.com/img.jpg"
+                  video: "https://youtube.com/watch?v=xyz789"
+                  plugin: |
+                    const app = document.getElementById('app');
+                    app.innerText = 'Hola desde YAML';
+          ```
+
+          ## Ventajas:
+          - Usa indentación (espacios) en lugar de llaves.
+          - El operador `|` permite escribir texto multilínea sin escapes.
+          - Es más limpio que JSON y menos propenso a errores de sintaxis.
+        plugin: |
+          const app = document.getElementById('app'); app.innerHTML = '<div style="background:#f59e0b; color:white; padding:20px; text-align:center; border-radius:8px;">✅ Plugin YAML funcionando</div>';

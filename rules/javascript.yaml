@@ -1,0 +1,23 @@
+- id: "no-var"
+  nombre: "Uso de 'var'"
+  descripcion: "Se recomienda usar 'let' o 'const' en lugar de 'var'."
+  severidad: "media"
+  patron_ast: "VariableDeclaration[kind='var']"
+
+- id: "console-log"
+  nombre: "Uso de console.log"
+  descripcion: "Has dejado un console.log en el código. Elimínalo en producción."
+  severidad: "baja"
+  patron_ast: "CallExpression[callee.object.name='console'][callee.property.name='log']"
+
+- id: "eqeqeq"
+  nombre: "Comparación no estricta"
+  descripcion: "Usa '===' en lugar de '==' para evitar coerción de tipos inesperada."
+  severidad: "alta"
+  patron_ast: "BinaryExpression[operator='==']"
+
+- id: "no-empty-function"
+  nombre: "Función vacía"
+  descripcion: "Esta función no tiene código. ¿Olvidaste implementarla?"
+  severidad: "media"
+  patron_ast: "FunctionDeclaration[body.body.length=0]"

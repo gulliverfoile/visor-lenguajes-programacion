@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizador de Código · Fase 1 + Mejoras</title>
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- CodeMirror -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+    <!-- Addons para plegado -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldgutter.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f2f5;
+            color: #333;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        header {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h1 { color: #2c3e50; margin-bottom: 10px; }
+        .subtitle { color: #7f8c8d; font-size: 1.1rem; }
+        .main-content { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f2f5;
+        }
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        select, button {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: 1px solid #e0e6ed;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        button {
+            background: #4a6cf7;
+            color: white;
+            font-weight: 600;
+            border: none;
+        }
+        button:hover { background: #3a56d4; transform: translateY(-2px); }
+        #clearBtn { background: #95a5a6; }
+        #clearBtn:hover { background: #7f8c8d; }
+        #removeLogsBtn { background: #e67e22; }
+        #removeLogsBtn:hover { background: #d35400; }
+        #applyTransformBtn { background: #8e44ad; }
+        #applyTransformBtn:hover { background: #6c3483; }
+        .search-box {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        .search-box input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .CodeMirror { height: 500px; border: 1px solid #e0e6ed; border-radius: 6px; }
+        #problems-list {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .problem-item {
+            background: #f8fafc;
+            border-left: 4px solid;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .problem-item:hover { transform: translateX(5px); background: #eef2ff; }
+        .problem-item.severity-alta { border-left-color: #e74c3c; }
+        .problem-item.severity-media { border-left-color: #f39c12; }
+        .problem-item.severity-baja { border-left-color: #2ecc71; }
+        .problem-item strong { color: #2c3e50; }
+        .problem-item p { color: #5d6d7e; margin: 8px 0; }
+        .problem-item button {
+            padding: 5px 12px;
+            font-size: 0.85rem;
+            background: #4a6cf7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+        .stats {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            text-align: right;
+        }
+        .search-results {
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        .search-result-item {
+            padding: 5px;
+            background: #f0f2f5;
+            border-radius: 4px;
+            margin-bottom: 3px;
+            cursor: pointer;
+        }
+        .search-result-item:hover { background: #e0e6ed; }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 Analizador de Código · Mejorado</h1>
+            <p class="subtitle">
+                Con plegado, reglas personalizadas y transformaciones automáticas.
+            </p>
+        </header>
+
+        <div class="main-content">
+            <!-- Panel izquierdo: editor y controles -->
+            <div class="card">
+                <h2>📝 Código fuente</h2>
+                <div class="toolbar">
+                    <select id="languageSelect">
+                        <option value="javascript">JavaScript</option>
+                    </select>
+                    <button id="analyzeBtn">Analizar</button>
+                    <button id="autoFixBtn">🔧 Corregir 'var'</button>
+                    <button id="removeLogsBtn">🗑️ Quitar logs</button>
+                    <button id="applyTransformBtn">⚡ Aplicar transformaciones</button>
+                    <button id="clearBtn">Limpiar</button>
+                </div>
+
+                <!-- Buscador manual -->
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Buscar palabra o frase...">
+                    <button id="searchBtn">🔍 Buscar</button>
+                </div>
+                <div id="searchResults" class="search-results"></div>
+
+                <!-- Editor de código -->
+                <textarea id="codeInput">function ejemplo() {
+  var x = 1;
+  console.log(x);
+  var x = 2; // repetida
+  return x;
+}</textarea>
+            </div>
+
+            <!-- Panel derecho: resultados -->
+            <div class="card">
+                <h2>⚠️ Problemas detectados</h2>
+                <div id="problems-list">
+                    <div class="problem-item" style="border-left-color: #888;">
+                        <em>Ejecuta el análisis para ver los problemas.</em>
+                    </div>
+                </div>
+                <div class="stats" id="stats"></div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Con plegado, reglas y transformaciones automáticas.</p>
+        </footer>
+    </div>
+
+    <!-- Librerías externas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <!-- Addons de plegado -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldgutter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/brace-fold.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/comment-fold.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <script src="https://unpkg.com/acorn@8.8.0/dist/acorn.js"></script>
+    <script src="https://unpkg.com/esquery@1.4.0/dist/esquery.min.js"></script>
+
+    <!-- Nuestro código modular -->
+    <script type="module" src="main.js"></script>
+</body>
+</html>
